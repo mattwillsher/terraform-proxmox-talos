@@ -1,8 +1,8 @@
 ---
-formatter: markdown
+formatter: markdown document
 
 recursive:
-  enabled: false
+  enabled: true
   path: modules
   include-main: true
 
