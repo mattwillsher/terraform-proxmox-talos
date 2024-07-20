@@ -1,0 +1,12 @@
+---
+formatter: markdown
+
+recursive:
+  enabled: false
+  path: modules
+  include-main: true
+
+output:
+  file: README.md
+  mode: replace
+

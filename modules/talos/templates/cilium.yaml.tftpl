@@ -1,0 +1,131 @@
+cluster:
+  network:
+    cni:
+      name: none
+  proxy:
+    disabled: true
+  inlineManifests:
+    - name: cilium-install
+      contents: |
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: cilium-install
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            name: cilium-install
+            namespace: kube-system
+        ---
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: cilium-install
+          namespace: kube-system
+        ---
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: cilium-install
+          namespace: kube-system
+        spec:
+          backoffLimit: 10
+          template:
+            metadata:
+              labels:
+                app: cilium-install
+            spec:
+              restartPolicy: OnFailure
+              tolerations:
+                - operator: Exists
+                - effect: NoSchedule
+                  operator: Exists
+                - effect: NoExecute
+                  operator: Exists
+                - effect: PreferNoSchedule
+                  operator: Exists
+                - key: node-role.kubernetes.io/control-plane
+                  operator: Exists
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/control-plane
+                  operator: Exists
+                  effect: NoExecute
+                - key: node-role.kubernetes.io/control-plane
+                  operator: Exists
+                  effect: PreferNoSchedule
+              affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                      - matchExpressions:
+                          - key: node-role.kubernetes.io/control-plane
+                            operator: Exists
+              serviceAccount: cilium-install
+              serviceAccountName: cilium-install
+              hostNetwork: true
+              containers:
+                - name: cilium-install
+                  image: quay.io/cilium/cilium-cli-ci:${cli_version}
+                  env:
+                    - name: KUBERNETES_SERVICE_HOST
+                      valueFrom:
+                        fieldRef:
+                          apiVersion: v1
+                          fieldPath: status.podIP
+                    - name: KUBERNETES_SERVICE_PORT
+                      value: "6443"
+                  volumeMounts:
+                    - name: cilium-install
+                      mountPath: /tmp/values.yaml
+                      subPath: values.yaml
+                      readOnly: true
+                  command:
+                    - cilium
+                    - install
+                    - --values=/tmp/values.yaml
+%{ if version != null }                    - --version=${version}%{ endif }
+              volumes:
+                - name: cilium-install
+                  configMap:
+                    name: cilium-install
+                    items:
+                      - key: values.yaml
+                        path: values.yaml
+        ---
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          namespace: kube-system
+          name: cilium-install
+        data:
+          values.yaml: |
+            ipam:
+              mode: kubernetes
+            kubeProxyReplacement: true
+            securityContext:
+              capabilities:
+                ciliumAgent:
+                  [
+                    CHOWN,
+                    KILL,
+                    NET_ADMIN,
+                    NET_RAW,
+                    IPC_LOCK,
+                    SYS_ADMIN,
+                    SYS_RESOURCE,
+                    DAC_OVERRIDE,
+                    FOWNER,
+                    SETGID,
+                    SETUID,
+                  ]
+                cleanCiliumState: [NET_ADMIN, SYS_ADMIN, SYS_RESOURCE]
+            cgroup:
+              autoMount:
+                enabled: false
+              hostRoot: /sys/fs/cgroup
+            k8sServiceHost: localhost
+            k8sServicePort: 7445
