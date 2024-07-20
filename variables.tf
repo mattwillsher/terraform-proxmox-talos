@@ -48,7 +48,8 @@ variable "machine_secrets" {
 
 variable "cluster_endpoint" {
   type        = string
-  description = "Cluster endpoint. Defaults to one of the control plane addresses."
+  description = "Cluster endpoint. Defaults to vip if provided, or else the first control plane addresses."
+  default     = null
 }
 
 variable "cluster_name" {

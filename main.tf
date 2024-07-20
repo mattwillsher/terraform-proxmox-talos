@@ -60,7 +60,7 @@ module "talos" {
   machine_type    = each.value.machine_type
 
   cluster_name     = var.cluster_name
-  cluster_endpoint = var.cluster_endpoint
+  cluster_endpoint = coalesce(var.cluster_endpoint, format("https://%s:6443", coalesce(var.vip_address, module.node_groups["controlplane"].ipv4_addresses[0])))
   ip_addresses     = each.value.ipv4_addresses
 
   vip_address      = var.vip_address
