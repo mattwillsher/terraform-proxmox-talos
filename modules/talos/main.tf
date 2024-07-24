@@ -1,8 +1,3 @@
-resource "random_id" "cluster_name" {
-  count       = var.cluster_name == null ? 1 : 0
-  byte_length = 4
-}
-
 locals {
   cluster_name = var.cluster_name == null ? "talos-cluster-${random_id.cluster_name[0].hex}" : var.cluster_name
   registry_mirrors = var.registry_mirrors == null ? "" : yamlencode({
@@ -40,6 +35,40 @@ locals {
     version     = var.cilium_version
     cli_version = var.cilium_cli_version
   }) : ""
+  node_labels = var.node_labels != {} ? yamlencode({
+    machine = {
+      nodeLabels = var.node_labels
+    }
+  }) : ""
+  node_taints = var.node_taints != {} ? yamlencode({
+    machine = {
+      nodeTaints = var.node_taints
+    }
+  }) : ""
+  rotate_certs = var.metrics_server ? yamlencode({
+    machine = {
+      kubelet = {
+        extraArgs = {
+          rotate-server-certificates = true
+        }
+      }
+    }
+  }) : ""
+  metrics_server = var.metrics_server && var.machine_type == "controlplane" && length(var.metrics_server_manifest_urls) > 0 ? yamlencode({
+    cluster = {
+      extraManifests = var.metrics_server_manifest_urls
+    }
+  }) : ""
+  extra_manifests = length(var.extra_manifests) > 0 ? yamlencode({
+    cluster = {
+      extraManifests = var.extra_manifests
+    }
+  }) : ""
+}
+
+resource "random_id" "cluster_name" {
+  count       = var.cluster_name == null ? 1 : 0
+  byte_length = 4
 }
 
 data "talos_machine_configuration" "this" {
@@ -53,7 +82,12 @@ data "talos_machine_configuration" "this" {
     local.installer_image,
     local.vip,
     local.registry_mirrors,
-    local.cilium
+    local.cilium,
+    local.rotate_certs,
+    local.metrics_server,
+    local.extra_manifests,
+    local.node_labels,
+    local.node_taints
   ])
 }
 
@@ -64,6 +98,11 @@ resource "talos_machine_configuration_apply" "this" {
   machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
 
   node = var.ip_addresses[count.index]
+
+  # Bad things can happen if changes are not managed in a controled manner.
+  lifecycle {
+    ignore_changes = [machine_configuration_input]
+  }
 }
 
 resource "talos_machine_bootstrap" "this" {

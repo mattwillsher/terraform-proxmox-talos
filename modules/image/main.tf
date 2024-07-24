@@ -18,10 +18,15 @@ resource "talos_image_factory_schematic" "this" {
   )
 }
 
+resource "random_id" "id" {
+  count       = var.id == null ? 1 : 0
+  byte_length = 4
+}
+
 resource "proxmox_virtual_environment_download_file" "this" {
   content_type = "iso"
   datastore_id = var.datastore_id
   node_name    = var.pve_node_name
   url          = format("https://%s/image/%s/%s/nocloud-amd64.iso", var.factory_host, talos_image_factory_schematic.this.id, var.talos_version)
-  file_name    = format("talos-%s-%s.iso", talos_image_factory_schematic.this.id, var.talos_version)
+  file_name    = format("talos-%s-%s-%s.iso", talos_image_factory_schematic.this.id, var.talos_version, var.id == null ? random_id.id[0].hex : var.id)
 }

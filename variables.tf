@@ -22,15 +22,6 @@ variable "workers" {
   default     = {}
 }
 
-variable "image" {
-  type = object({
-    iso_file_id     = string
-    installer_image = optional(string)
-  })
-  description = "Talos Linux image information."
-  default     = null
-}
-
 variable "datastore_id" {
   type        = string
   description = "Default datastore id."
@@ -103,5 +94,65 @@ variable "cilium_cli_version" {
 variable "cilium" {
   description = "Install Cilium."
   type        = bool
+  default     = false
+}
+
+variable "talos_version" {
+  type        = string
+  description = "Talos Linux version."
+  default     = null
+}
+
+variable "factory_host" {
+  type        = string
+  description = "Image factory hostname."
+  default     = "factory.talos.dev"
+}
+
+variable "installer_image" {
+  type        = string
+  description = "Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO."
+  default     = null
+}
+
+variable "iso_file_id" {
+  description = "Proxmox identifier for the boot ISO. installer_image must also be provided if this options is used."
+  type        = string
+  default     = null
+}
+
+variable "extensions" {
+  type        = list(string)
+  description = "List of extensions in the image. qemu-guest-agent is included by default."
+  default     = []
+}
+
+variable "image_pve_node_name" {
+  type        = string
+  description = "Target node to place the image on. Defaults to the first value of pve_node_names."
+  default     = "pve"
+}
+
+variable "image_datastore_id" {
+  type        = string
+  description = "Datastore to store the image in."
+  default     = "local"
+}
+
+variable "node_labels" {
+  type        = map(string)
+  description = "Labels to apply to all nodes."
+  default     = {}
+}
+
+variable "node_taints" {
+  type        = map(string)
+  description = "Taints to apply to all nodes."
+  default     = {}
+}
+
+variable "metrics_server" {
+  type        = bool
+  description = "Enable metrics server."
   default     = false
 }

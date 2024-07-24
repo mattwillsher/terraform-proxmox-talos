@@ -32,3 +32,9 @@ variable "disable_qemu_guest_agent" {
   description = "Do not include the qemu guest agent."
   default     = false
 }
+
+variable "id" {
+  type        = string
+  description = "Unique identifier for the image, postfixed the the generated name. If not set, generate a random id."
+  default     = null
+}

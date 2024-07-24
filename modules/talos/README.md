@@ -117,6 +117,14 @@ Type: `list(string)`
 
 Default: `[]`
 
+### <a name="input_extra_manifests"></a> [extra\_manifests](#input\_extra\_manifests)
+
+Description: List of URLs of extra manifests to apply at bootstrap.
+
+Type: `list(string)`
+
+Default: `[]`
+
 ### <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type)
 
 Description: Machine type - controlplane, worker.
@@ -124,6 +132,45 @@ Description: Machine type - controlplane, worker.
 Type: `string`
 
 Default: `"worker"`
+
+### <a name="input_metrics_server"></a> [metrics\_server](#input\_metrics\_server)
+
+Description: Enable metrics server on the cluster
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_metrics_server_manifest_urls"></a> [metrics\_server\_manifest\_urls](#input\_metrics\_server\_manifest\_urls)
+
+Description: List of URLs of Kubernetes manifests to install the metrics server and associated software.
+
+Type: `list(string)`
+
+Default:
+
+```json
+[
+  "https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml",
+  "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml"
+]
+```
+
+### <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels)
+
+Description: Map of node labels to assign to nodes in the node groups.
+
+Type: `map(any)`
+
+Default: `{}`
+
+### <a name="input_node_taints"></a> [node\_taints](#input\_node\_taints)
+
+Description: Map of node taints to assign to nodes in the node groups.
+
+Type: `map(any)`
+
+Default: `{}`
 
 ### <a name="input_registry_mirrors"></a> [registry\_mirrors](#input\_registry\_mirrors)
 
@@ -156,4 +203,8 @@ Description: Control plane ip addresses.
 ### <a name="output_kubeconfig_raw"></a> [kubeconfig\_raw](#output\_kubeconfig\_raw)
 
 Description: Raw kubeconfig when machine\_type is controlplane.
+
+### <a name="output_machine_configuration"></a> [machine\_configuration](#output\_machine\_configuration)
+
+Description: Generated Talos machine configuration.
 <!-- END_TF_DOCS -->

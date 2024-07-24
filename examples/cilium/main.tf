@@ -1,9 +1,3 @@
-
-locals {
-  version  = "v1.7.4"
-  versions = toset(concat([local.version], []))
-}
-
 data "talos_client_configuration" "this" {
   cluster_name         = module.cluster.cluster_name
   client_configuration = talos_machine_secrets.this.client_configuration
@@ -20,21 +14,15 @@ resource "dns_a_record_set" "api_endpoint" {
 
 resource "talos_machine_secrets" "this" {}
 
-module "image" {
-  for_each      = local.versions
-  source        = "../../modules/image"
-  talos_version = each.value
-}
-
 module "cluster" {
   source = "../.."
 
-  datastore_id = var.datastore_id
+  cluster_name  = var.cluster_name
+  talos_version = "v1.7.5"
 
-  image            = module.image[local.version]
-  cluster_name     = var.cluster_name
   cluster_endpoint = "https://${dns_a_record_set.api_endpoint.name}.${dns_a_record_set.api_endpoint.zone}:6443"
-  machine_secrets  = talos_machine_secrets.this
+
+  datastore_id = var.datastore_id
 
   controlplane = {
     node_count = 3
@@ -54,13 +42,14 @@ module "cluster" {
     }
   }
 
-  vip_address = var.vip_address
-
+  vip_address      = var.vip_address
   registry_mirrors = var.registry_mirrors
   cilium           = true
   cilium_version   = "1.15.7"
 
-  tags = [var.cluster_name, "kubernetes"]
+  machine_secrets = talos_machine_secrets.this
+
+  tags = [var.cluster_name, "kubernetes", "cilium-example"]
 }
 
 resource "local_file" "kubeconfig" {

@@ -74,3 +74,38 @@ variable "cilium_cli_version" {
   type        = string
   default     = "latest"
 }
+
+variable "node_labels" {
+  description = "Map of node labels to assign to nodes in the node groups."
+  type        = map(any)
+  default     = {}
+}
+
+variable "node_taints" {
+  description = "Map of node taints to assign to nodes in the node groups."
+  type        = map(any)
+  default     = {}
+}
+
+variable "metrics_server" {
+  description = "Enable metrics server on the cluster"
+  type        = bool
+  default     = false
+}
+
+variable "metrics_server_manifest_urls" {
+  description = "List of URLs of Kubernetes manifests to install the metrics server and associated software."
+  type        = list(string)
+  default = [
+    "https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml",
+    "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml"
+  ]
+  nullable = false
+}
+
+variable "extra_manifests" {
+  description = "List of URLs of extra manifests to apply at bootstrap."
+  type        = list(string)
+  default     = []
+  nullable    = false
+}

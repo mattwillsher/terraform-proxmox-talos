@@ -1,4 +1,5 @@
 locals {
+  cluster_name = coalesce(var.cluster_name, "talos-cluster-${random_id.cluster_name[0].hex}")
   node_groups = merge({
     controlplane = merge({
       name_prefix       = "talos-ctrl-"
@@ -9,6 +10,24 @@ locals {
       }
     , var.controlplane)
   }, var.workers)
+}
+
+resource "random_id" "cluster_name" {
+  count       = var.cluster_name == null ? 1 : 0
+  byte_length = 4
+}
+
+module "image" {
+  source = "./modules/image"
+
+  talos_version = var.talos_version
+  factory_host  = var.factory_host
+  extensions    = var.extensions
+
+  id = local.cluster_name
+
+  pve_node_name = var.image_pve_node_name
+  datastore_id  = var.image_datastore_id
 }
 
 module "node_groups" {
@@ -31,7 +50,7 @@ module "node_groups" {
   memory_size_in_mb = try(each.value.memory_size_in_mb, null)
 
   datastore_id = var.datastore_id
-  iso_file_id  = try(each.value.iso_file_id, var.image.iso_file_id, null)
+  iso_file_id  = coalesce(var.iso_file_id, module.image.iso_file_id)
   disks        = try(each.value.disks, null)
 
   network_devices = lookup(each.value, "network_devices", null)
@@ -48,7 +67,7 @@ module "talos" {
 
   node_count = each.value.node_count
 
-  installer_image = var.image.installer_image
+  installer_image = coalesce(var.installer_image, module.image.installer_image)
 
   # yamlencode as list of mixed elements can't be concatenated. https://github.com/hashicorp/terraform/issues/33259
   config_patches = concat(
@@ -59,14 +78,20 @@ module "talos" {
   machine_secrets = var.machine_secrets
   machine_type    = each.value.machine_type
 
-  cluster_name     = var.cluster_name
+  cluster_name     = local.cluster_name
   cluster_endpoint = coalesce(var.cluster_endpoint, format("https://%s:6443", coalesce(var.vip_address, module.node_groups["controlplane"].ipv4_addresses[0])))
-  ip_addresses     = each.value.ipv4_addresses
 
-  vip_address      = var.vip_address
+  ip_addresses = each.value.ipv4_addresses
+  vip_address  = var.vip_address
+
   registry_mirrors = var.registry_mirrors
+
+  metrics_server = var.metrics_server
 
   cilium             = var.cilium
   cilium_cli_version = var.cilium_cli_version
   cilium_version     = var.cilium_version
+
+  node_labels = merge(var.node_labels, try(each.value.node_labels, {}))
+  node_taints = merge(var.node_taints, try(each.value.node_taints, {}))
 }

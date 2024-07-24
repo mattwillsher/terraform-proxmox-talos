@@ -5,13 +5,23 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
+
 ## Providers
 
-No providers.
+The following providers are used by this module:
+
+- <a name="provider_random"></a> [random](#provider\_random) (3.6.2)
 
 ## Modules
 
 The following Modules are called:
+
+### <a name="module_image"></a> [image](#module\_image)
+
+Source: ./modules/image
+
+Version:
 
 ### <a name="module_node_groups"></a> [node\_groups](#module\_node\_groups)
 
@@ -27,7 +37,9 @@ Version:
 
 ## Resources
 
-No resources.
+The following resources are used by this module:
+
+- [random_id.cluster_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 
 ## Required Inputs
 
@@ -137,20 +149,77 @@ Type: `string`
 
 Default: `"local-lvm"`
 
-### <a name="input_image"></a> [image](#input\_image)
+### <a name="input_extensions"></a> [extensions](#input\_extensions)
 
-Description: Talos Linux image information.
+Description: List of extensions in the image. qemu-guest-agent is included by default.
 
-Type:
+Type: `list(string)`
 
-```hcl
-object({
-    iso_file_id     = string
-    installer_image = optional(string)
-  })
-```
+Default: `[]`
+
+### <a name="input_factory_host"></a> [factory\_host](#input\_factory\_host)
+
+Description: Image factory hostname.
+
+Type: `string`
+
+Default: `"factory.talos.dev"`
+
+### <a name="input_image_datastore_id"></a> [image\_datastore\_id](#input\_image\_datastore\_id)
+
+Description: Datastore to store the image in.
+
+Type: `string`
+
+Default: `"local"`
+
+### <a name="input_image_pve_node_name"></a> [image\_pve\_node\_name](#input\_image\_pve\_node\_name)
+
+Description: Target node to place the image on. Defaults to the first value of pve\_node\_names.
+
+Type: `string`
+
+Default: `"pve"`
+
+### <a name="input_installer_image"></a> [installer\_image](#input\_installer\_image)
+
+Description: Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO.
+
+Type: `string`
 
 Default: `null`
+
+### <a name="input_iso_file_id"></a> [iso\_file\_id](#input\_iso\_file\_id)
+
+Description: Proxmox identifier for the boot ISO. installer\_image must also be provided if this options is used.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_metrics_server"></a> [metrics\_server](#input\_metrics\_server)
+
+Description: Enable metrics server.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels)
+
+Description: Labels to apply to all nodes.
+
+Type: `map(string)`
+
+Default: `{}`
+
+### <a name="input_node_taints"></a> [node\_taints](#input\_node\_taints)
+
+Description: Taints to apply to all nodes.
+
+Type: `map(string)`
+
+Default: `{}`
 
 ### <a name="input_pve_node_names"></a> [pve\_node\_names](#input\_pve\_node\_names)
 
@@ -181,6 +250,14 @@ Description: List of tags for each node.
 Type: `list(string)`
 
 Default: `[]`
+
+### <a name="input_talos_version"></a> [talos\_version](#input\_talos\_version)
+
+Description: Talos Linux version.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_vip_address"></a> [vip\_address](#input\_vip\_address)
 
@@ -213,6 +290,10 @@ Description: n/a
 ### <a name="output_kubeconfig_raw"></a> [kubeconfig\_raw](#output\_kubeconfig\_raw)
 
 Description: Raw kubeconfig.
+
+### <a name="output_machine_configurations"></a> [machine\_configurations](#output\_machine\_configurations)
+
+Description: Machine configurations by node group.
 
 ### <a name="output_node_ip_addresses"></a> [node\_ip\_addresses](#output\_node\_ip\_addresses)
 

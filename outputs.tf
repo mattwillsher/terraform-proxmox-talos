@@ -20,6 +20,11 @@ output "cluster_name" {
   value       = module.talos["controlplane"].cluster_name
 }
 
+output "machine_configurations" {
+  description = "Machine configurations by node group."
+  value       = [for k, v in module.talos : v.machine_configuration]
+}
+
 # output "node_groups" {
 #   value = local.node_groups
 # }

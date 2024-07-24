@@ -12,3 +12,8 @@ output "ip_addresses" {
   description = "Control plane ip addresses."
   value       = var.ip_addresses
 }
+
+output "machine_configuration" {
+  description = "Generated Talos machine configuration."
+  value       = talos_machine_configuration_apply.this[*].machine_configuration
+}

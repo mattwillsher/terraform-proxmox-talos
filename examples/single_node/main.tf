@@ -11,21 +11,21 @@ module "cluster" {
   source = "../.."
 
   talos_version = "v1.7.5"
-
-  datastore_id = "nvme-data"
-
-  workers = {
-    default = {
-      node_count        = 3
-      memory_size_in_mb = 4096
-      tags              = ["worker"]
-    }
-  }
+  datastore_id  = "nvme-data"
 
   machine_secrets = talos_machine_secrets.this
-  metrics_server  = true
 
-  tags = ["kubernetes", "basic-example"]
+  controlplane = {
+    node_count = 1
+    memory     = 4096
+    config_patches = [{
+      cluster = {
+        allowSchedulingOnControlPlanes = true
+      }
+    }]
+  }
+
+  tags = ["kubernetes", "single-node-example"]
 }
 
 resource "local_file" "kubeconfig" {
