@@ -4,27 +4,39 @@ variable "controlplane" {
   default     = {}
 }
 
+variable "workers" {
+  type        = any
+  description = "Node groups configuration for workers."
+  default     = {}
+}
+
+variable "cpu_count" {
+  type        = number
+  description = "Number of CPU core per node. (NG)."
+  default     = 2
+}
+
 variable "cpu_flags" {
   type        = list(string)
-  description = "List of CPU flags."
+  description = "List of CPU flags. (NG)."
   default     = ["+aes"]
 }
 
 variable "cpu_type" {
   type        = string
-  description = "CPU type."
+  description = "CPU type. (NG)."
   default     = "x86-64-v2-AES"
 }
 
-variable "workers" {
-  type        = any
-  description = "Node groups configuration."
-  default     = {}
+variable "memory_size_in_mb" {
+  type        = string
+  description = "Memory size for nodes, in MB, where not otherwise specified. (NG)."
+  default     = 2048
 }
 
 variable "datastore_id" {
   type        = string
-  description = "Default datastore id."
+  description = "Default datastore id, where ever storage is needed but not otherwise set. (NG)."
   default     = "local-lvm"
 }
 
@@ -50,19 +62,19 @@ variable "cluster_name" {
 }
 
 variable "tags" {
-  description = "List of tags for each node."
+  description = "List of tags for each node. (NG)."
   type        = list(string)
   default     = []
 }
 
 variable "vip_address" {
-  description = "Virtal IP address."
+  description = "Virtual IP address."
   type        = string
   default     = null
 }
 
 variable "config_patches" {
-  description = "Configuration patches for all nodes."
+  description = "Talos Linux Configuration patches as a list of maps. (NG)."
   type        = list(any)
   default     = []
 }
@@ -74,7 +86,7 @@ variable "registry_mirrors" {
 }
 
 variable "pve_node_names" {
-  description = "List of Proxmox node names to distribue the VM over. Placement is round-robin."
+  description = "List of Proxmox node names to distribue the VM over. Placement is round-robin. (NG)."
   type        = list(string)
   default     = ["pve"]
 }
@@ -86,7 +98,7 @@ variable "cilium_version" {
 }
 
 variable "cilium_cli_version" {
-  description = "Cilium CLI version"
+  description = "Cilium CLI version."
   type        = string
   default     = "latest"
 }
@@ -116,7 +128,7 @@ variable "installer_image" {
 }
 
 variable "iso_file_id" {
-  description = "Proxmox identifier for the boot ISO. installer_image must also be provided if this options is used."
+  description = "Proxmox identifier for the boot ISO. If not set, ISO image for the talos_version will be downloaded and used. installer_image must also be provided if this options is used."
   type        = string
   default     = null
 }
@@ -135,19 +147,19 @@ variable "image_pve_node_name" {
 
 variable "image_datastore_id" {
   type        = string
-  description = "Datastore to store the image in."
+  description = "Datastore in which to store the downloadeded ISO image."
   default     = "local"
 }
 
 variable "node_labels" {
   type        = map(string)
-  description = "Labels to apply to all nodes."
+  description = "Labels to apply to nodes. (NG)."
   default     = {}
 }
 
 variable "node_taints" {
   type        = map(string)
-  description = "Taints to apply to all nodes."
+  description = "Taints to apply to all nodes. (NG)."
   default     = {}
 }
 

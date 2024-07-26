@@ -15,6 +15,8 @@ module "cluster" {
 
   machine_secrets = talos_machine_secrets.this
 
+  metrics_server = true
+
   controlplane = {
     node_count = 1
     memory     = 4096

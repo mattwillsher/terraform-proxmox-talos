@@ -1,3 +1,25 @@
+# terraform-proxmox-talos
+
+This module configures Talos Linux for Proxmox. It is able to set up a cluster from one node to many and has shortcut options to enable commonly requested features.
+
+The module is currently in an alpha development phase - it lacks comprehensive testing and the module and its sub-module are subject to change.
+
+## Features
+
+* Create 1-n control plane nodes
+* Create 0-n worker nodes in groups of differing configuration
+* Support for per-node group and per-cluster variable configuration
+* Label nodes and taint by node group
+* Set [control plane VIP][1]
+* Use Cilium for the CNI instead of Flannel
+* Configure metrics-server for statistics
+
+## Variable scoping
+
+There are two levels at which various variables apply - at the cluster level, which is true for all variables - and at the node group level. The node group level can be added to the controlplane and workers values and will be scoped only to that node groups. If a cluster level variables is also so, the node group level takes precidence. 
+
+Variables that can be applied via the node group level variables are marked `(NG)`
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -73,7 +95,7 @@ Default: `false`
 
 ### <a name="input_cilium_cli_version"></a> [cilium\_cli\_version](#input\_cilium\_cli\_version)
 
-Description: Cilium CLI version
+Description: Cilium CLI version.
 
 Type: `string`
 
@@ -105,7 +127,7 @@ Default: `null`
 
 ### <a name="input_config_patches"></a> [config\_patches](#input\_config\_patches)
 
-Description: Configuration patches for all nodes.
+Description: Talos Linux Configuration patches as a list of maps. (NG).
 
 Type: `list(any)`
 
@@ -119,9 +141,17 @@ Type: `any`
 
 Default: `{}`
 
+### <a name="input_cpu_count"></a> [cpu\_count](#input\_cpu\_count)
+
+Description: Number of CPU core per node. (NG).
+
+Type: `number`
+
+Default: `2`
+
 ### <a name="input_cpu_flags"></a> [cpu\_flags](#input\_cpu\_flags)
 
-Description: List of CPU flags.
+Description: List of CPU flags. (NG).
 
 Type: `list(string)`
 
@@ -135,7 +165,7 @@ Default:
 
 ### <a name="input_cpu_type"></a> [cpu\_type](#input\_cpu\_type)
 
-Description: CPU type.
+Description: CPU type. (NG).
 
 Type: `string`
 
@@ -143,7 +173,7 @@ Default: `"x86-64-v2-AES"`
 
 ### <a name="input_datastore_id"></a> [datastore\_id](#input\_datastore\_id)
 
-Description: Default datastore id.
+Description: Default datastore id, where ever storage is needed but not otherwise set. (NG).
 
 Type: `string`
 
@@ -167,7 +197,7 @@ Default: `"factory.talos.dev"`
 
 ### <a name="input_image_datastore_id"></a> [image\_datastore\_id](#input\_image\_datastore\_id)
 
-Description: Datastore to store the image in.
+Description: Datastore in which to store the downloadeded ISO image.
 
 Type: `string`
 
@@ -191,11 +221,19 @@ Default: `null`
 
 ### <a name="input_iso_file_id"></a> [iso\_file\_id](#input\_iso\_file\_id)
 
-Description: Proxmox identifier for the boot ISO. installer\_image must also be provided if this options is used.
+Description: Proxmox identifier for the boot ISO. If not set, ISO image for the talos\_version will be downloaded and used. installer\_image must also be provided if this options is used.
 
 Type: `string`
 
 Default: `null`
+
+### <a name="input_memory_size_in_mb"></a> [memory\_size\_in\_mb](#input\_memory\_size\_in\_mb)
+
+Description: Memory size for nodes, in MB, where not otherwise specified. (NG).
+
+Type: `string`
+
+Default: `2048`
 
 ### <a name="input_metrics_server"></a> [metrics\_server](#input\_metrics\_server)
 
@@ -207,7 +245,7 @@ Default: `false`
 
 ### <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels)
 
-Description: Labels to apply to all nodes.
+Description: Labels to apply to nodes. (NG).
 
 Type: `map(string)`
 
@@ -215,7 +253,7 @@ Default: `{}`
 
 ### <a name="input_node_taints"></a> [node\_taints](#input\_node\_taints)
 
-Description: Taints to apply to all nodes.
+Description: Taints to apply to all nodes. (NG).
 
 Type: `map(string)`
 
@@ -223,7 +261,7 @@ Default: `{}`
 
 ### <a name="input_pve_node_names"></a> [pve\_node\_names](#input\_pve\_node\_names)
 
-Description: List of Proxmox node names to distribue the VM over. Placement is round-robin.
+Description: List of Proxmox node names to distribue the VM over. Placement is round-robin. (NG).
 
 Type: `list(string)`
 
@@ -245,7 +283,7 @@ Default: `null`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: List of tags for each node.
+Description: List of tags for each node. (NG).
 
 Type: `list(string)`
 
@@ -261,7 +299,7 @@ Default: `null`
 
 ### <a name="input_vip_address"></a> [vip\_address](#input\_vip\_address)
 
-Description: Virtal IP address.
+Description: Virtual IP address.
 
 Type: `string`
 
@@ -269,7 +307,7 @@ Default: `null`
 
 ### <a name="input_workers"></a> [workers](#input\_workers)
 
-Description: Node groups configuration.
+Description: Node groups configuration for workers.
 
 Type: `any`
 

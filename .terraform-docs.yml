@@ -8,5 +8,4 @@ recursive:
 
 output:
   file: README.md
-  mode: replace
 
