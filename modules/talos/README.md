@@ -13,8 +13,6 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_random"></a> [random](#provider\_random) (3.6.2)
-
 - <a name="provider_talos"></a> [talos](#provider\_talos) (0.6.0-alpha.1)
 
 ## Modules
@@ -25,7 +23,6 @@ No modules.
 
 The following resources are used by this module:
 
-- [random_id.cluster_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 - [talos_cluster_kubeconfig.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/resources/cluster_kubeconfig) (resource)
 - [talos_machine_bootstrap.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/resources/machine_bootstrap) (resource)
 - [talos_machine_configuration_apply.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/resources/machine_configuration_apply) (resource)
@@ -38,6 +35,12 @@ The following input variables are required:
 ### <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint)
 
 Description: Cluster endpoint.
+
+Type: `string`
+
+### <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name)
+
+Description: Name of the cluster.
 
 Type: `string`
 
@@ -96,14 +99,6 @@ Default: `"latest"`
 ### <a name="input_cilium_version"></a> [cilium\_version](#input\_cilium\_version)
 
 Description: Cilium version, set to enable. If not set, uses Talos default CNI.
-
-Type: `string`
-
-Default: `null`
-
-### <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name)
-
-Description: Name of the cluster.
 
 Type: `string`
 

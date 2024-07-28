@@ -1,6 +1,6 @@
 locals {
   # Generated cluster name in case one is not specificed.
-  cluster_name = coalesce(var.cluster_name, "talos-cluster-${random_id.cluster_name[0].hex}")
+  cluster_name = coalesce(var.cluster_name, try("talos-cluster-${random_id.cluster_name[0].hex}", "talos-proxmox"))
   # Map containing the full, node group configurations. 
   # Values can also come from cluster wide values specified as explicit variables,
   # but the values in this node_group take priority.
@@ -15,6 +15,10 @@ locals {
       }
     , var.controlplane)
   }, var.workers)
+
+  controlplane_ip_addresses = module.talos["controlplane"].ip_addresses
+  node_ip_addresses         = flatten([for k, v in module.node_groups : v.ipv4_addresses])
+  machine_secrets           = var.talos_machine_secrets != null ? var.talos_machine_secrets : talos_machine_secrets.this[0]
 }
 
 # Random ID for use where a cluster_name input variable has not been
@@ -24,8 +28,20 @@ resource "random_id" "cluster_name" {
   byte_length = 4
 }
 
+resource "talos_machine_secrets" "this" {
+  count         = var.talos_machine_secrets == null ? 1 : 0
+  talos_version = var.talos_version
+}
+
+data "talos_client_configuration" "this" {
+  cluster_name         = local.cluster_name
+  client_configuration = local.machine_secrets.client_configuration
+  endpoints            = coalesce(var.talos_endpoint_hosts, local.controlplane_ip_addresses)
+  nodes                = local.node_ip_addresses
+}
+
 module "image" {
-  count  = var.iso_file_id != null ? 1 : 0
+  count  = var.iso_file_id == null ? 1 : 0
   source = "./modules/image"
 
   talos_version = var.talos_version
@@ -57,9 +73,9 @@ module "node_groups" {
   cpu_type          = try(each.value.cpu_type, var.cpu_type, null)
   memory_size_in_mb = try(each.value.memory_size_in_mb, var.memory_size_in_mb, null)
 
-  datastore_id = var.datastore_id
+  datastore_id = try(each.value.datastore_id, var.datastore_id)
   iso_file_id  = coalesce(var.iso_file_id, module.image[0].iso_file_id)
-  disks        = try(each.value.disks, null)
+  disks        = try(each.value.disks, var.disks, null)
 
   network_devices = lookup(each.value, "network_devices", null)
   ipconfig_ipv4   = try(each.value.ipconfig_ipv4, null)
@@ -83,7 +99,7 @@ module "talos" {
     [for p in try(local.node_groups[each.key].config_patches, []) : yamlencode(p)]
   )
 
-  machine_secrets = var.machine_secrets
+  machine_secrets = local.machine_secrets
   machine_type    = each.value.machine_type
 
   cluster_name     = local.cluster_name

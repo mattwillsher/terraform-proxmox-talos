@@ -28,6 +28,12 @@ variable "cpu_type" {
   default     = "x86-64-v2-AES"
 }
 
+variable "disks" {
+  type        = list(any)
+  description = "Disk map. See node_group submodule for specifics. Typically only changes to size are needed. (NG)."
+  default     = [{ size = 20 }]
+}
+
 variable "memory_size_in_mb" {
   type        = string
   description = "Memory size for nodes, in MB, where not otherwise specified. (NG)."
@@ -36,17 +42,14 @@ variable "memory_size_in_mb" {
 
 variable "datastore_id" {
   type        = string
-  description = "Default datastore id, where ever storage is needed but not otherwise set. (NG)."
+  description = "Default datastore id for EFI and TPM disks and for disks where not set via the disks values(s) (NG)."
   default     = "local-lvm"
 }
 
-variable "machine_secrets" {
-  type = object({
-    client_configuration = map(string)
-    id                   = string
-    machine_secrets      = any
-  })
+variable "talos_machine_secrets" {
+  type        = any
   description = "Talos machine secrets."
+  default     = null
 }
 
 variable "cluster_endpoint" {
@@ -167,4 +170,10 @@ variable "metrics_server" {
   type        = bool
   description = "Enable metrics server."
   default     = false
+}
+
+variable "talos_endpoint_hosts" {
+  type        = list(string)
+  description = "List of hosts to use in client Talos endpoints list. If not, set, us the IP addresses of the controlplane nodes."
+  default     = null
 }

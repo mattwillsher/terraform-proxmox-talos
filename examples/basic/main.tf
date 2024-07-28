@@ -1,9 +1,3 @@
-data "talos_client_configuration" "this" {
-  cluster_name         = module.cluster.cluster_name
-  client_configuration = talos_machine_secrets.this.client_configuration
-  endpoints            = module.cluster.controlplane_ip_addresses
-  nodes                = module.cluster.node_ip_addresses
-}
 
 resource "talos_machine_secrets" "this" {}
 
@@ -12,18 +6,25 @@ module "cluster" {
 
   talos_version = "v1.7.5"
 
+  cluster_name = "basic-example"
+
   datastore_id = "nvme-data"
+
+  controlplane = {
+    node_count = 3
+    memory     = 2048
+    tags       = ["controlplane"]
+  }
 
   workers = {
     default = {
       node_count        = 3
-      memory_size_in_mb = 4096
+      memory_size_in_mb = 2048
       tags              = ["worker"]
     }
   }
 
-  machine_secrets = talos_machine_secrets.this
-  metrics_server  = true
+  metrics_server = true
 
   tags = ["kubernetes", "basic-example"]
 }
@@ -34,6 +35,6 @@ resource "local_file" "kubeconfig" {
 }
 
 resource "local_file" "talosconfig" {
-  content  = data.talos_client_configuration.this.talos_config
+  content  = module.cluster.talos_client_configuration.talos_config
   filename = "talosconfig"
 }

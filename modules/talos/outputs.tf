@@ -1,6 +1,6 @@
 output "cluster_name" {
   description = "Cluster name."
-  value       = local.cluster_name
+  value       = var.cluster_name
 }
 
 output "kubeconfig_raw" {

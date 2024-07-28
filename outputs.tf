@@ -1,13 +1,9 @@
-# output "control_nodes" {
-#   value = module.controllers
-# }
-
 output "controlplane_ip_addresses" {
-  value = module.talos["controlplane"].ip_addresses
+  value = local.controlplane_ip_addresses
 }
 
 output "node_ip_addresses" {
-  value = flatten([for k, v in module.node_groups : v.ipv4_addresses])
+  value = local.node_ip_addresses
 }
 
 output "kubeconfig_raw" {
@@ -25,15 +21,6 @@ output "machine_configurations" {
   value       = [for k, v in module.talos : v.machine_configuration]
 }
 
-# output "node_groups" {
-#   value = local.node_groups
-# }
-
-# output "nodes" {
-#   value = [for k, v in module.nodes : v.ipv4_addresses]
-# }
-
-# output "nodes" {
-#   value = [for k, v in module.nodes : v.node_group]
-# }
-
+output "talos_client_configuration" {
+  value = data.talos_client_configuration.this
+}

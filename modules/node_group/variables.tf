@@ -122,13 +122,3 @@ variable "cpu_flags" {
   description = "List of CPU flags."
   default     = null
 }
-
-# variable "talos_client_configuration" {
-#   type        = map(string)
-#   description = "Talos client configuration."
-# }
-
-# variable "talos_machine_configuration" {
-#   type        = any
-#   description = "Talos machine configuration."
-# }

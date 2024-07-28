@@ -18,7 +18,7 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   node_name     = element(var.pve_node_names, count.index)
   machine       = "q35"
-  bios          = "ovmf"
+  bios          = "seabios"
   scsi_hardware = "virtio-scsi-single"
 
   on_boot = "true"
@@ -37,23 +37,25 @@ resource "proxmox_virtual_environment_vm" "this" {
     dedicated = var.memory_size_in_mb
   }
 
-  tpm_state {
-    version      = "v2.0"
-    datastore_id = var.datastore_id
-  }
+  # tpm_state {
+  #   version      = "v2.0"
+  #   datastore_id = var.datastore_id
+  # }
 
-  efi_disk {
-    datastore_id = var.datastore_id
-    type         = "4m"
-  }
+  # efi_disk {
+  #   datastore_id = var.datastore_id
+  #   type         = "4m"
+  # }
 
   cdrom {
-    enabled = true
-    file_id = var.iso_file_id
+    enabled   = true
+    interface = "ide0"
+    file_id   = var.iso_file_id
   }
 
   initialization {
     datastore_id = var.datastore_id
+    interface    = "ide2"
     ip_config {
       ipv4 {
         address = var.ipconfig_ipv4
@@ -90,27 +92,3 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   serial_device {}
 }
-
-# locals {
-#   value = {
-#     for i, nic in proxmox_virtual_environment_vm.this[0].network_interface_names : nic => flatten([for _, vm in proxmox_virtual_environment_vm.this : vm.ipv4_addresses[i]])
-#   }
-#   ip = proxmox_virtual_environment_vm.this[count.index].ipv4_addresses[index(proxmox_virtual_environment_vm.this[count.index].network_interface_names, "eth0")][0]
-# }
-
-
-# resource "talos_machine_configuration_apply" "this" {
-#   count = local.node_count
-
-#   client_configuration        = var.talos_client_configuration
-#   machine_configuration_input = var.talos_machine_configuration
-#   node                        = local.ip
-# }
-
-# resource "talos_machine_bootstrap" "this" {
-#   count      = local.node_count
-#   depends_on = [talos_machine_configuration_apply.this]
-
-#   node                 = proxmox_virtual_environment_vm.this[count.index].ipv4_addresses[index(proxmox_virtual_environment_vm.this[count.index].network_interface_names, "eth0")][0]
-#   client_configuration = var.talos_client_configuration
-# }

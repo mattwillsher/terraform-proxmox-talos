@@ -1,5 +1,4 @@
 locals {
-  cluster_name = var.cluster_name == null ? "talos-cluster-${random_id.cluster_name[0].hex}" : var.cluster_name
   registry_mirrors = var.registry_mirrors == null ? "" : yamlencode({
     machine = {
       registries = {
@@ -66,13 +65,8 @@ locals {
   }) : ""
 }
 
-resource "random_id" "cluster_name" {
-  count       = var.cluster_name == null ? 1 : 0
-  byte_length = 4
-}
-
 data "talos_machine_configuration" "this" {
-  cluster_name     = local.cluster_name
+  cluster_name     = var.cluster_name
   cluster_endpoint = var.cluster_endpoint
 
   machine_type    = var.machine_type

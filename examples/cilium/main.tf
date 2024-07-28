@@ -1,18 +1,9 @@
-data "talos_client_configuration" "this" {
-  cluster_name         = module.cluster.cluster_name
-  client_configuration = talos_machine_secrets.this.client_configuration
-  endpoints            = module.cluster.controlplane_ip_addresses
-  nodes                = module.cluster.node_ip_addresses
-}
-
 resource "dns_a_record_set" "api_endpoint" {
   zone      = var.dns_zone
   name      = var.cluster_name
   addresses = [var.vip_address]
   ttl       = 60
 }
-
-resource "talos_machine_secrets" "this" {}
 
 module "cluster" {
   source = "../.."
@@ -25,17 +16,14 @@ module "cluster" {
   datastore_id = var.datastore_id
 
   controlplane = {
-    node_count = 3
-    config_patches = [{
-      cluster = {
-        allowSchedulingOnControlPlanes = false
-      }
-    }]
-    tags = ["controlplane"]
+    name_prefix = "${var.cluster_name}-controlplane-"
+    node_count  = 3
+    tags        = ["controlplane"]
   }
 
   workers = {
     default = {
+      name_prefix       = "${var.cluster_name}-worker-"
       node_count        = 3
       memory_size_in_mb = 8192
       tags              = ["worker"]
@@ -47,7 +35,7 @@ module "cluster" {
   cilium           = true
   cilium_version   = "1.15.7"
 
-  machine_secrets = talos_machine_secrets.this
+  metrics_server = true
 
   tags = [var.cluster_name, "kubernetes", "cilium-example"]
 }
@@ -58,6 +46,6 @@ resource "local_file" "kubeconfig" {
 }
 
 resource "local_file" "talosconfig" {
-  content  = data.talos_client_configuration.this.talos_config
+  content  = module.cluster.talos_client_configuration.talos_config
   filename = "talosconfig"
 }

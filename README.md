@@ -29,11 +29,15 @@ The following requirements are needed by this module:
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
+- <a name="requirement_talos"></a> [talos](#requirement\_talos) (0.6.0-alpha.1)
+
 ## Providers
 
 The following providers are used by this module:
 
 - <a name="provider_random"></a> [random](#provider\_random) (3.6.2)
+
+- <a name="provider_talos"></a> [talos](#provider\_talos) (0.6.0-alpha.1)
 
 ## Modules
 
@@ -62,24 +66,12 @@ Version:
 The following resources are used by this module:
 
 - [random_id.cluster_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
+- [talos_machine_secrets.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/resources/machine_secrets) (resource)
+- [talos_client_configuration.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/data-sources/client_configuration) (data source)
 
 ## Required Inputs
 
-The following input variables are required:
-
-### <a name="input_machine_secrets"></a> [machine\_secrets](#input\_machine\_secrets)
-
-Description: Talos machine secrets.
-
-Type:
-
-```hcl
-object({
-    client_configuration = map(string)
-    id                   = string
-    machine_secrets      = any
-  })
-```
+No required inputs.
 
 ## Optional Inputs
 
@@ -173,11 +165,27 @@ Default: `"x86-64-v2-AES"`
 
 ### <a name="input_datastore_id"></a> [datastore\_id](#input\_datastore\_id)
 
-Description: Default datastore id, where ever storage is needed but not otherwise set. (NG).
+Description: Default datastore id for EFI and TPM disks and for disks where not set via the disks values(s) (NG).
 
 Type: `string`
 
 Default: `"local-lvm"`
+
+### <a name="input_disks"></a> [disks](#input\_disks)
+
+Description: Disk map. See node\_group submodule for specifics. Typically only changes to size are needed. (NG).
+
+Type: `list(any)`
+
+Default:
+
+```json
+[
+  {
+    "size": 20
+  }
+]
+```
 
 ### <a name="input_extensions"></a> [extensions](#input\_extensions)
 
@@ -289,6 +297,22 @@ Type: `list(string)`
 
 Default: `[]`
 
+### <a name="input_talos_endpoint_hosts"></a> [talos\_endpoint\_hosts](#input\_talos\_endpoint\_hosts)
+
+Description: List of hosts to use in client Talos endpoints list. If not, set, us the IP addresses of the controlplane nodes.
+
+Type: `list(string)`
+
+Default: `null`
+
+### <a name="input_talos_machine_secrets"></a> [talos\_machine\_secrets](#input\_talos\_machine\_secrets)
+
+Description: Talos machine secrets.
+
+Type: `any`
+
+Default: `null`
+
 ### <a name="input_talos_version"></a> [talos\_version](#input\_talos\_version)
 
 Description: Talos Linux version.
@@ -334,6 +358,10 @@ Description: Raw kubeconfig.
 Description: Machine configurations by node group.
 
 ### <a name="output_node_ip_addresses"></a> [node\_ip\_addresses](#output\_node\_ip\_addresses)
+
+Description: n/a
+
+### <a name="output_talos_client_configuration"></a> [talos\_client\_configuration](#output\_talos\_client\_configuration)
 
 Description: n/a
 <!-- END_TF_DOCS -->
