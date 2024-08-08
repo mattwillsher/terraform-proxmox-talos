@@ -57,6 +57,9 @@ cluster:
                 - key: node-role.kubernetes.io/control-plane
                   operator: Exists
                   effect: PreferNoSchedule
+                - key: node.cilium.io/agent-not-ready
+                  operator: Exists
+                  effect: NoExecute
               affinity:
                 nodeAffinity:
                   requiredDuringSchedulingIgnoredDuringExecution:

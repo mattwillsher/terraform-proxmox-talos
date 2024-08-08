@@ -88,6 +88,12 @@ variable "registry_mirrors" {
   default     = null
 }
 
+variable "registry_mirrors_override_path" {
+  description = "Override the registry mirrors path generation. Overrides detection of '/v2/' in the registry mirror urls."
+  type        = bool
+  default     = null
+}
+
 variable "pve_node_names" {
   description = "List of Proxmox node names to distribue the VM over. Placement is round-robin. (NG)."
   type        = list(string)

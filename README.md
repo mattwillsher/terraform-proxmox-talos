@@ -289,6 +289,14 @@ Type: `map(list(string))`
 
 Default: `null`
 
+### <a name="input_registry_mirrors_override_path"></a> [registry\_mirrors\_override\_path](#input\_registry\_mirrors\_override\_path)
+
+Description: Override the registry mirrors path generation. Overrides detection of '/v2/' in the registry mirror urls.
+
+Type: `bool`
+
+Default: `null`
+
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
 Description: List of tags for each node. (NG).

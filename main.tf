@@ -108,7 +108,8 @@ module "talos" {
   ip_addresses = each.value.ipv4_addresses
   vip_address  = var.vip_address
 
-  registry_mirrors = var.registry_mirrors
+  registry_mirrors               = var.registry_mirrors
+  registry_mirrors_override_path = var.registry_mirrors_override_path
 
   metrics_server = var.metrics_server
 
