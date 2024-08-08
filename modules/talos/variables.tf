@@ -56,6 +56,12 @@ variable "registry_mirrors" {
   default     = null
 }
 
+variable "registry_mirrors_override_path" {
+  description = "Override the registry mirrors path generation. Overrides detection of '/v2/' in the registry mirror urls."
+  type        = bool
+  default     = null
+}
+
 variable "cilium" {
   description = "Install Cilium."
   type        = bool

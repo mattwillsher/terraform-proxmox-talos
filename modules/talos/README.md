@@ -175,6 +175,14 @@ Type: `map(list(string))`
 
 Default: `null`
 
+### <a name="input_registry_mirrors_override_path"></a> [registry\_mirrors\_override\_path](#input\_registry\_mirrors\_override\_path)
+
+Description: Override the registry mirrors path generation. Overrides detection of '/v2/' in the registry mirror urls.
+
+Type: `bool`
+
+Default: `null`
+
 ### <a name="input_vip_address"></a> [vip\_address](#input\_vip\_address)
 
 Description: Virtual IP address, only used for contarolplane nodes.
