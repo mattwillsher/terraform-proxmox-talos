@@ -101,16 +101,6 @@ variable "tags" {
   nullable    = false
 }
 
-variable "machine_type" {
-  type        = string
-  description = "Machine type - controlplane, worker."
-  default     = "worker"
-  validation {
-    condition     = contains(["controlplane", "worker"], var.machine_type)
-    error_message = "Invalid machine type."
-  }
-}
-
 variable "cpu_type" {
   type        = string
   description = "CPU type."

@@ -1,22 +1,27 @@
 # terraform-proxmox-talos
 
-This module configures Talos Linux for Proxmox. It is able to set up a cluster from one node to many and has shortcut options to enable commonly requested features.
+This module configures Talos Linux for Proxmox. It is able to set up a cluster
+from one node to many and has shortcut options to enable commonly requested
+features.
 
-The module is currently in an alpha development phase - it lacks comprehensive testing and the module and its sub-module are subject to change.
+The module is currently in an alpha development phase - it lacks comprehensive
+testing and the module and its sub-module are subject to change.
 
 ## Features
 
-* Create 1-n control plane nodes
-* Create 0-n worker nodes in groups of differing configuration
-* Support for per-node group and per-cluster variable configuration
-* Label nodes and taint by node group
-* Set [control plane VIP][1]
-* Use Cilium for the CNI instead of Flannel
-* Configure metrics-server for statistics
+- Create 1-n control plane nodes
+- Create 0-n worker nodes in groups of differing configuration
+- Support for per-node group and per-cluster variable configuration
+- Label nodes and taint by node group
+- Set control plane VIP
 
 ## Variable scoping
 
-There are two levels at which various variables apply - at the cluster level, which is true for all variables - and at the node group level. The node group level can be added to the controlplane and workers values and will be scoped only to that node groups. If a cluster level variables is also so, the node group level takes precidence. 
+There are two levels at which various variables apply - at the cluster level
+which is true for all variables - and at the node group level.
+The node group level can be added to the controlplane and workers values and
+will be scoped only to that node groups. If a cluster level variables is also
+so, the node group level takes precidence.
 
 Variables that can be applied via the node group level variables are marked `(NG)`
 
@@ -29,35 +34,35 @@ The following requirements are needed by this module:
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
-- <a name="requirement_talos"></a> [talos](#requirement\_talos) (0.6.0-alpha.1)
+- <a name="requirement_talos"></a> [talos](#requirement\_talos) (~> 0.7.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_random"></a> [random](#provider\_random) (3.6.2)
+- <a name="provider_random"></a> [random](#provider\_random) (3.6.3)
 
-- <a name="provider_talos"></a> [talos](#provider\_talos) (0.6.0-alpha.1)
+- <a name="provider_talos"></a> [talos](#provider\_talos) (0.7.0)
 
 ## Modules
 
 The following Modules are called:
 
-### <a name="module_image"></a> [image](#module\_image)
+### <a name="module_machine_image"></a> [machine\_image](#module\_machine\_image)
 
-Source: ./modules/image
-
-Version:
-
-### <a name="module_node_groups"></a> [node\_groups](#module\_node\_groups)
-
-Source: ./modules/node_group
+Source: ./modules/machine_image
 
 Version:
 
-### <a name="module_talos"></a> [talos](#module\_talos)
+### <a name="module_talos_linux"></a> [talos\_linux](#module\_talos\_linux)
 
-Source: ./modules/talos
+Source: ./modules/talos_linux
+
+Version:
+
+### <a name="module_virtual_machines"></a> [virtual\_machines](#module\_virtual\_machines)
+
+Source: ./modules/virtual_machines
 
 Version:
 
@@ -66,8 +71,8 @@ Version:
 The following resources are used by this module:
 
 - [random_id.cluster_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
-- [talos_machine_secrets.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/resources/machine_secrets) (resource)
-- [talos_client_configuration.this](https://registry.terraform.io/providers/siderolabs/talos/0.6.0-alpha.1/docs/data-sources/client_configuration) (data source)
+- [talos_machine_secrets.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/machine_secrets) (resource)
+- [talos_client_configuration.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/client_configuration) (data source)
 
 ## Required Inputs
 
@@ -76,30 +81,6 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
-
-### <a name="input_cilium"></a> [cilium](#input\_cilium)
-
-Description: Install Cilium.
-
-Type: `bool`
-
-Default: `false`
-
-### <a name="input_cilium_cli_version"></a> [cilium\_cli\_version](#input\_cilium\_cli\_version)
-
-Description: Cilium CLI version.
-
-Type: `string`
-
-Default: `"latest"`
-
-### <a name="input_cilium_version"></a> [cilium\_version](#input\_cilium\_version)
-
-Description: Cilium version.
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint)
 
@@ -119,7 +100,7 @@ Default: `null`
 
 ### <a name="input_config_patches"></a> [config\_patches](#input\_config\_patches)
 
-Description: Talos Linux Configuration patches as a list of maps. (NG).
+Description: Talos Linux machine configuration patches as a list of maps. (NG).
 
 Type: `list(any)`
 
@@ -195,14 +176,6 @@ Type: `list(string)`
 
 Default: `[]`
 
-### <a name="input_factory_host"></a> [factory\_host](#input\_factory\_host)
-
-Description: Image factory hostname.
-
-Type: `string`
-
-Default: `"factory.talos.dev"`
-
 ### <a name="input_image_datastore_id"></a> [image\_datastore\_id](#input\_image\_datastore\_id)
 
 Description: Datastore in which to store the downloadeded ISO image.
@@ -219,17 +192,17 @@ Type: `string`
 
 Default: `"pve"`
 
-### <a name="input_installer_image"></a> [installer\_image](#input\_installer\_image)
+### <a name="input_iso_file_id"></a> [iso\_file\_id](#input\_iso\_file\_id)
 
-Description: Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO.
+Description: Proxmox identifier for the boot ISO. If not set, ISO image for the talos\_version will be downloaded and used. installer\_image must also be provided if this options is used.
 
 Type: `string`
 
 Default: `null`
 
-### <a name="input_iso_file_id"></a> [iso\_file\_id](#input\_iso\_file\_id)
+### <a name="input_machine_install_image"></a> [machine\_install\_image](#input\_machine\_install\_image)
 
-Description: Proxmox identifier for the boot ISO. If not set, ISO image for the talos\_version will be downloaded and used. installer\_image must also be provided if this options is used.
+Description: Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO.
 
 Type: `string`
 
@@ -242,14 +215,6 @@ Description: Memory size for nodes, in MB, where not otherwise specified. (NG).
 Type: `string`
 
 Default: `2048`
-
-### <a name="input_metrics_server"></a> [metrics\_server](#input\_metrics\_server)
-
-Description: Enable metrics server.
-
-Type: `bool`
-
-Default: `false`
 
 ### <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels)
 
@@ -287,7 +252,7 @@ Description: Map of mirror name to a list of mirror endpoints.
 
 Type: `map(list(string))`
 
-Default: `null`
+Default: `{}`
 
 ### <a name="input_registry_mirrors_override_path"></a> [registry\_mirrors\_override\_path](#input\_registry\_mirrors\_override\_path)
 
@@ -296,6 +261,22 @@ Description: Override the registry mirrors path generation. Overrides detection 
 Type: `bool`
 
 Default: `null`
+
+### <a name="input_secure_boot"></a> [secure\_boot](#input\_secure\_boot)
+
+Description: Enable secure boot.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_stable_versions_only"></a> [stable\_versions\_only](#input\_stable\_versions\_only)
+
+Description: Only use stable versions.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
@@ -323,7 +304,7 @@ Default: `null`
 
 ### <a name="input_talos_version"></a> [talos\_version](#input\_talos\_version)
 
-Description: Talos Linux version.
+Description: Talos Linux version. If not set, the latest version will be used.
 
 Type: `string`
 

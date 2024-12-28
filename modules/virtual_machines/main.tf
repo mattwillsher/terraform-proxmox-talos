@@ -5,7 +5,7 @@ resource "random_id" "this" {
 }
 
 locals {
-  node_count = var.node_count * (var.create == true ? 1 : 0)
+  node_count = var.node_count * (var.create ? 1 : 0)
 }
 
 resource "proxmox_virtual_environment_vm" "this" {
@@ -18,10 +18,11 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   node_name     = element(var.pve_node_names, count.index)
   machine       = "q35"
-  bios          = "seabios"
+  bios          = "ovmf"
   scsi_hardware = "virtio-scsi-single"
 
-  on_boot = "true"
+  on_boot    = "true"
+  boot_order = ["scsi0", "ide0"]
 
   agent {
     enabled = true
@@ -37,15 +38,19 @@ resource "proxmox_virtual_environment_vm" "this" {
     dedicated = var.memory_size_in_mb
   }
 
-  # tpm_state {
-  #   version      = "v2.0"
-  #   datastore_id = var.datastore_id
-  # }
+  tpm_state {
+    version      = "v2.0"
+    datastore_id = var.datastore_id
+  }
 
-  # efi_disk {
-  #   datastore_id = var.datastore_id
-  #   type         = "4m"
-  # }
+  efi_disk {
+    datastore_id = var.datastore_id
+    type         = "4m"
+  }
+
+  operating_system {
+    type = "l26"
+  }
 
   cdrom {
     enabled   = true
@@ -84,10 +89,6 @@ resource "proxmox_virtual_environment_vm" "this" {
     content {
       bridge = network_device.value.bridge
     }
-  }
-
-  operating_system {
-    type = "l26"
   }
 
   serial_device {}

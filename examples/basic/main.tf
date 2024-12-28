@@ -1,10 +1,8 @@
 
-resource "talos_machine_secrets" "this" {}
-
 module "cluster" {
   source = "../.."
 
-  talos_version = "v1.7.5"
+  talos_version = "v1.8.4"
 
   cluster_name = "basic-example"
 
@@ -23,8 +21,6 @@ module "cluster" {
       tags              = ["worker"]
     }
   }
-
-  metrics_server = true
 
   tags = ["kubernetes", "basic-example"]
 }

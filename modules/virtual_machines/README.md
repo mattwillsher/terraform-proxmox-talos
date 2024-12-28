@@ -1,3 +1,5 @@
+# terraform-proxmox-talos/modules/node_group
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -5,19 +7,19 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (~> 0.6)
+- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (~> 0.69.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
-- <a name="requirement_talos"></a> [talos](#requirement\_talos) (0.6.0-alpha.1)
+- <a name="requirement_talos"></a> [talos](#requirement\_talos) (~> 0.7.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) (0.61.1)
+- <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) (0.69.0)
 
-- <a name="provider_random"></a> [random](#provider\_random) (3.6.2)
+- <a name="provider_random"></a> [random](#provider\_random) (3.6.3)
 
 ## Modules
 
@@ -124,14 +126,6 @@ Type: `string`
 
 Default: `"dhcp"`
 
-### <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type)
-
-Description: Machine type - controlplane, worker.
-
-Type: `string`
-
-Default: `"worker"`
-
 ### <a name="input_memory_size_in_mb"></a> [memory\_size\_in\_mb](#input\_memory\_size\_in\_mb)
 
 Description: Amount of memory in MB.
@@ -217,10 +211,6 @@ Description: VM Ipv6 addresses.
 ### <a name="output_mac_addresses"></a> [mac\_addresses](#output\_mac\_addresses)
 
 Description: VM Mac addresses.
-
-### <a name="output_machine_type"></a> [machine\_type](#output\_machine\_type)
-
-Description: Machine\_type. One of 'controlplane' or 'worker'.
 
 ### <a name="output_names"></a> [names](#output\_names)
 

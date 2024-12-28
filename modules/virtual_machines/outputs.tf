@@ -1,16 +1,25 @@
+locals {
+  # Extract the network interfaces names for the Ethernet interface for each VM
+  network_interface_names = [for i, vm in proxmox_virtual_environment_vm.this : one([
+    for nic in vm.network_interface_names : nic
+    if can(regex("^e(th\\d|n)", nic))
+    ])
+  ]
+}
+
 output "ipv4_addresses" {
   description = "VM Ipv4 addresses."
-  value       = [for i, vm in proxmox_virtual_environment_vm.this : vm.ipv4_addresses[index(vm.network_interface_names, "eth0")][0]]
+  value       = [for i, vm in proxmox_virtual_environment_vm.this : vm.ipv4_addresses[index(vm.network_interface_names, local.network_interface_names[i])][0]]
 }
 
 output "mac_addresses" {
   description = "VM Mac addresses."
-  value       = [for i, vm in proxmox_virtual_environment_vm.this : vm.mac_addresses[index(vm.network_interface_names, "eth0")]]
+  value       = [for i, vm in proxmox_virtual_environment_vm.this : vm.mac_addresses[index(vm.network_interface_names, local.network_interface_names[i])]]
 }
 
 output "ipv6_addresses" {
   description = "VM Ipv6 addresses."
-  value       = [for i, vm in proxmox_virtual_environment_vm.this : vm.ipv6_addresses[index(vm.network_interface_names, "eth0")][0]]
+  value       = [for i, vm in proxmox_virtual_environment_vm.this : vm.ipv6_addresses[index(vm.network_interface_names, local.network_interface_names[i])][0]]
 }
 
 output "names" {
@@ -21,11 +30,6 @@ output "names" {
 output "node_count" {
   description = "Node count."
   value       = local.node_count
-}
-
-output "machine_type" {
-  description = "Machine_type. One of 'controlplane' or 'worker'."
-  value       = var.machine_type
 }
 
 # output "nodes" {

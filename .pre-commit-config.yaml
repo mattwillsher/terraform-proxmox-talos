@@ -1,16 +1,21 @@
 repos:
-- repo: https://github.com/terraform-docs/terraform-docs
-  rev: "v0.18.0"
-  hooks:
-  - id: terraform-docs-go
-    args: ["-c",".terraform-docs.yml","."]
-- repo: https://github.com/antonbabenko/pre-commit-terraform
-  rev: "v1.92.0"
-  hooks:
-  - id: terraform_validate
-    args:
-    - --hook-config=--retry-once-with-cleanup=true
-  - id: terraform_fmt
-  - id: terraform_tflint
-  - id: terraform_trivy
-
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "v0.18.0"
+    hooks:
+      - id: terraform-docs-go
+        args: ["-c", ".terraform-docs.yml", "."]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: "v1.92.0"
+    hooks:
+      - id: terraform_validate
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+      - id: terraform_fmt
+      - id: terraform_tflint
+        args:
+          - --hook-config=--parallelism-ci-cpu-cores=2
+      - id: terraform_trivy
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: "v0.17.0"
+    hooks:
+      - id: markdownlint-cli2
