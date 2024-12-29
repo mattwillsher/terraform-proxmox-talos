@@ -2,12 +2,22 @@ variable "proxmox_node_name" {
   type        = string
   description = "Target node to place the image on."
   default     = "pve"
+
+  validation {
+    condition     = contains(local.proxmox_nodes.names, var.proxmox_node_name)
+    error_message = "value must be a valid node name."
+  }
 }
 
 variable "proxmox_datastore_id" {
   type        = string
   description = "Datastore to store the image in."
   default     = "local"
+
+  validation {
+    condition     = contains(local.proxmox_available_iso_datastores, var.proxmox_datastore_id)
+    error_message = "Datastore must be an active, enabled ISO datastore."
+  }
 }
 
 variable "talos_version" {
