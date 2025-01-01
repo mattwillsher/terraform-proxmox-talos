@@ -32,6 +32,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
+- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (~> 0.69.0)
+
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
 - <a name="requirement_talos"></a> [talos](#requirement\_talos) (~> 0.7.0)
@@ -354,7 +356,11 @@ Description: Cluster name.
 
 ### <a name="output_controlplane_ip_addresses"></a> [controlplane\_ip\_addresses](#output\_controlplane\_ip\_addresses)
 
-Description: n/a
+Description: List of control plane IP addresses.
+
+### <a name="output_endpoints"></a> [endpoints](#output\_endpoints)
+
+Description: List of cluster endpoints.
 
 ### <a name="output_kubeconfig_raw"></a> [kubeconfig\_raw](#output\_kubeconfig\_raw)
 
@@ -366,7 +372,7 @@ Description: Machine configurations by node group.
 
 ### <a name="output_node_ip_addresses"></a> [node\_ip\_addresses](#output\_node\_ip\_addresses)
 
-Description: n/a
+Description: List of work node IP addresses.
 
 ### <a name="output_talos_client_configuration"></a> [talos\_client\_configuration](#output\_talos\_client\_configuration)
 

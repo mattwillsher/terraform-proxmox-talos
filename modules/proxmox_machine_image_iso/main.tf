@@ -11,8 +11,12 @@ locals {
   #   var.secure_boot ? "-secureboot" : "",
   #   coalesce(try(random_id.proxmox_file_name_suffix[0].hex, null), var.proxmox_file_name_suffix, "")
   # )
-  iso_url_list  = split("/", var.iso_url)
-  iso_file_name = format("talos-%s", local.iso_url_list[length(local.iso_url_list) - 1])
+  iso_url_list = split("/", var.iso_url)
+  iso_file_name = format("talos-%s-%s-%s-%s.iso",
+    replace(local.iso_url_list[length(local.iso_url_list) - 1], ".iso", ""),
+    local.iso_url_list[4], local.iso_url_list[5],
+    coalesce(var.file_name_suffix, random_id.proxmox_file_name_suffix.hex)
+  )
 }
 
 data "proxmox_virtual_environment_nodes" "this" {}
@@ -22,7 +26,6 @@ data "proxmox_virtual_environment_datastores" "this" {
 }
 
 resource "random_id" "proxmox_file_name_suffix" {
-  count       = var.file_name_suffix == "" ? 1 : 0
   byte_length = 4
 }
 

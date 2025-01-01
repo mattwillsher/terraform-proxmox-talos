@@ -20,7 +20,7 @@ output "machine_configuration_applied" {
 
 output "machine_configuration" {
   description = "Generated Talos machine configuration."
-  value       = data.talos_machine_configuration.this.machine_configuration
+  value       = data.talos_machine_configuration.this[*].machine_configuration
 }
 
 output "config_patches" {

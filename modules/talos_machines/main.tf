@@ -23,8 +23,9 @@ locals {
     network = {
       interfaces = [{
         deviceSelector = {
-          busPath = "0*"
+          physical = true
         }
+        dhcp = true
         vip = {
           ip = var.vip_address
         }
@@ -105,20 +106,25 @@ locals {
 }
 
 data "talos_machine_configuration" "this" {
+  count = var.machine_count
+
   cluster_name     = var.cluster_name
   cluster_endpoint = local.cluster_endpoint
 
   machine_type    = var.is_controlplane ? "controlplane" : "worker"
   machine_secrets = var.machine_secrets.machine_secrets
 
-  config_patches = local.config_patches
+  config_patches = concat(
+    [yamlencode({ machine = { network = { hostname = proxmox_virtual_environment_vm.this[count.index].name } } })],
+    local.config_patches
+  )
 }
 
 resource "talos_machine_configuration_apply" "this" {
   count = var.machine_count * (var.apply ? 1 : 0)
 
   client_configuration        = var.machine_secrets.client_configuration
-  machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
+  machine_configuration_input = data.talos_machine_configuration.this[count.index].machine_configuration
 
   node = local.ipv4_addresses[count.index]
 }
@@ -179,18 +185,18 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_id   = var.iso_file_id
   }
 
-  initialization {
-    datastore_id = var.datastore_id
-    interface    = "ide2"
-    ip_config {
-      ipv4 {
-        address = var.ipconfig_ipv4
-      }
-      ipv6 {
-        address = var.ipconfig_ipv6
-      }
-    }
-  }
+  # initialization {
+  #   datastore_id = var.datastore_id
+  #   interface    = "ide2"
+  #   ip_config {
+  #     ipv4 {
+  #       address = "dhcp"
+  #     }
+  #     ipv6 {
+  #       address = "dhcp"
+  #     }
+  #   }
+  # }
 
   dynamic "disk" {
     for_each = var.disks

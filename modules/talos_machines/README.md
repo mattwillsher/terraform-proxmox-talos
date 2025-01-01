@@ -102,7 +102,7 @@ Default: `[]`
 
 Description: Additional config patches.
 
-Type: `list(map(any))`
+Type: `list(string)`
 
 Default: `[]`
 
@@ -161,22 +161,6 @@ Default:
   }
 ]
 ```
-
-### <a name="input_ipconfig_ipv4"></a> [ipconfig\_ipv4](#input\_ipconfig\_ipv4)
-
-Description: IPv4 address configuration.
-
-Type: `string`
-
-Default: `"dhcp"`
-
-### <a name="input_ipconfig_ipv6"></a> [ipconfig\_ipv6](#input\_ipconfig\_ipv6)
-
-Description: IPv6 address configuration.
-
-Type: `string`
-
-Default: `"dhcp"`
 
 ### <a name="input_is_controlplane"></a> [is\_controlplane](#input\_is\_controlplane)
 

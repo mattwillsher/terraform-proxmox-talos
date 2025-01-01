@@ -20,13 +20,18 @@ locals {
 
   controlplane_ip_addresses = module.talos_machines["controlplane"].ipv4_addresses
   node_ip_addresses         = flatten([for k, v in module.talos_machines : v.ipv4_addresses])
-  machine_secrets           = coalesce(var.talos_machine_secrets, talos_machine_secrets.this[0])
+  endpoints = coalesce(
+    var.talos_endpoint_hosts,
+    var.vip_address == null ? null : [var.vip_address],
+    local.controlplane_ip_addresses
+  )
+  machine_secrets = coalesce(var.talos_machine_secrets, talos_machine_secrets.this[0])
 }
 
 data "talos_client_configuration" "this" {
   cluster_name         = local.cluster_name
   client_configuration = local.machine_secrets.client_configuration
-  endpoints            = coalesce(var.talos_endpoint_hosts, local.controlplane_ip_addresses)
+  endpoints            = local.endpoints
   nodes                = local.node_ip_addresses
 }
 
@@ -96,8 +101,6 @@ module "talos_machines" {
   disks = try(each.value.disks, var.disks, null)
 
   network_devices = lookup(each.value, "network_devices", null)
-  ipconfig_ipv4   = try(each.value.ipconfig_ipv4, null)
-  ipconfig_ipv6   = try(each.value.ipconfig_ipv6, null)
 
   tags = concat(try(each.value.tags, []), var.tags)
 

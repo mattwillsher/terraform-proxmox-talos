@@ -29,7 +29,7 @@ data "talos_image_factory_extensions_versions" "this" {
 data "talos_image_factory_urls" "this" {
   talos_version = local.talos_version
   schematic_id  = talos_image_factory_schematic.this.id
-  platform      = "nocloud"
+  platform      = "metal"
 }
 
 # https://github.com/siderolabs/image-factory?tab=readme-ov-file#post-schematics

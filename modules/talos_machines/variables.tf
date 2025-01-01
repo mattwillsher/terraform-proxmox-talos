@@ -7,11 +7,6 @@ variable "machine_secrets" {
   })
 }
 
-# variable "ip_addresses" {
-#   description = "List of node IP addresses."
-#   type        = list(string)
-# }
-
 variable "cluster_endpoint" {
   description = "Cluster endpoint."
   type        = string
@@ -30,7 +25,7 @@ variable "cluster_name" {
 
 variable "config_patches" {
   description = "Additional config patches."
-  type        = list(map(any))
+  type        = list(string)
   default     = []
 }
 
@@ -146,20 +141,6 @@ variable "disks" {
 variable "iso_file_id" {
   type        = string
   description = "Install image ISO file id."
-  nullable    = false
-}
-
-variable "ipconfig_ipv4" {
-  description = "IPv4 address configuration."
-  type        = string
-  default     = "dhcp"
-  nullable    = false
-}
-
-variable "ipconfig_ipv6" {
-  description = "IPv6 address configuration."
-  type        = string
-  default     = "dhcp"
   nullable    = false
 }
 

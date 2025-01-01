@@ -1,7 +1,7 @@
 module "cluster" {
   source = "../.."
 
-  datastore_id = "nvme-data"
+  datastore_id = "local-lvm"
 
   controlplane = {
     node_count        = 1
@@ -11,6 +11,10 @@ module "cluster" {
         allowSchedulingOnControlPlanes = true
       }
     }]
+    disks = [
+      { size = 20, interface = "scsi0" },
+      { size = 10, interface = "scsi1" }
+    ]
   }
 
   tags = ["kubernetes", "single-node-example"]

@@ -11,8 +11,6 @@ The following requirements are needed by this module:
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
-- <a name="requirement_talos"></a> [talos](#requirement\_talos) (~> 0.7.0)
-
 ## Providers
 
 The following providers are used by this module:

@@ -1,9 +1,16 @@
 output "controlplane_ip_addresses" {
-  value = local.controlplane_ip_addresses
+  description = "List of control plane IP addresses."
+  value       = local.controlplane_ip_addresses
 }
 
 output "node_ip_addresses" {
-  value = local.node_ip_addresses
+  description = "List of work node IP addresses."
+  value       = local.node_ip_addresses
+}
+
+output "endpoints" {
+  description = "List of cluster endpoints."
+  value       = local.endpoints
 }
 
 output "kubeconfig_raw" {
@@ -18,7 +25,7 @@ output "cluster_name" {
 
 output "machine_configurations" {
   description = "Machine configurations by node group."
-  value       = [for k, v in module.talos_machines : v.machine_configuration]
+  value       = { for k, v in module.talos_machines : k => v.machine_configuration }
 }
 
 output "talos_client_configuration" {
