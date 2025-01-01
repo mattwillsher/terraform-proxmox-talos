@@ -77,7 +77,7 @@ variable "vip_address" {
 }
 
 variable "config_patches" {
-  description = "Talos Linux Configuration patches as a list of maps. (NG)."
+  description = "Talos Linux machine configuration patches as a list of maps. (NG)."
   type        = list(any)
   default     = []
 }
@@ -85,7 +85,7 @@ variable "config_patches" {
 variable "registry_mirrors" {
   description = "Map of mirror name to a list of mirror endpoints."
   type        = map(list(string))
-  default     = null
+  default     = {}
 }
 
 variable "registry_mirrors_override_path" {
@@ -100,37 +100,43 @@ variable "pve_node_names" {
   default     = ["pve"]
 }
 
-variable "cilium_version" {
-  description = "Cilium version."
-  type        = string
-  default     = null
-}
+# variable "cilium_version" {
+#   description = "Cilium version."
+#   type        = string
+#   default     = null
+# }
 
-variable "cilium_cli_version" {
-  description = "Cilium CLI version."
-  type        = string
-  default     = "latest"
-}
+# variable "cilium_cli_version" {
+#   description = "Cilium CLI version."
+#   type        = string
+#   default     = "latest"
+# }
 
-variable "cilium" {
-  description = "Install Cilium."
-  type        = bool
-  default     = false
-}
+# variable "cilium" {
+#   description = "Install Cilium."
+#   type        = bool
+#   default     = false
+# }
 
 variable "talos_version" {
   type        = string
-  description = "Talos Linux version."
+  description = "Talos Linux version. If not set, the latest version will be used."
   default     = null
 }
 
-variable "factory_host" {
-  type        = string
-  description = "Image factory hostname."
-  default     = "factory.talos.dev"
+variable "stable_versions_only" {
+  type        = bool
+  description = "Only use stable versions."
+  default     = true
 }
 
-variable "installer_image" {
+# variable "factory_host" {
+#   type        = string
+#   description = "Image factory hostname."
+#   default     = "factory.talos.dev"
+# }
+
+variable "machine_installer_image" {
   type        = string
   description = "Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO."
   default     = null
@@ -172,14 +178,32 @@ variable "node_taints" {
   default     = {}
 }
 
-variable "metrics_server" {
-  type        = bool
-  description = "Enable metrics server."
-  default     = false
-}
+# variable "metrics_server" {
+#   type        = bool
+#   description = "Enable metrics server."
+#   default     = false
+# }
 
 variable "talos_endpoint_hosts" {
   type        = list(string)
   description = "List of hosts to use in client Talos endpoints list. If not, set, us the IP addresses of the controlplane nodes."
   default     = null
+}
+
+variable "secure_boot" {
+  type        = bool
+  description = "Enable secure boot."
+  default     = true
+}
+
+variable "apply" {
+  type        = bool
+  description = "Apply the Talos configuration."
+  default     = true
+}
+
+variable "bootstrap" {
+  type        = bool
+  description = "Bootstrap the cluster."
+  default     = true
 }

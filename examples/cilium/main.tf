@@ -32,10 +32,10 @@ module "cluster" {
 
   vip_address      = var.vip_address
   registry_mirrors = var.registry_mirrors
-  cilium           = true
-  cilium_version   = "1.15.7"
+  # cilium           = true
+  # cilium_version   = "1.15.7"
 
-  metrics_server = true
+  # metrics_server = true
 
   tags = [var.cluster_name, "kubernetes", "cilium-example"]
 }

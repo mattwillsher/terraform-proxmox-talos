@@ -40,5 +40,6 @@ terraform.rc
 kubeconfig
 talosconfig
 
+# Ignore lock files that aren't in the root module.
 /.terraform.lock.hcl
 /modules/**/.terraform.lock.hcl
