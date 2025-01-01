@@ -136,7 +136,7 @@ variable "stable_versions_only" {
 #   default     = "factory.talos.dev"
 # }
 
-variable "machine_install_image" {
+variable "machine_installer_image" {
   type        = string
   description = "Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO."
   default     = null
@@ -193,5 +193,17 @@ variable "talos_endpoint_hosts" {
 variable "secure_boot" {
   type        = bool
   description = "Enable secure boot."
+  default     = true
+}
+
+variable "apply" {
+  type        = bool
+  description = "Apply the Talos configuration."
+  default     = true
+}
+
+variable "bootstrap" {
+  type        = bool
+  description = "Bootstrap the cluster."
   default     = true
 }

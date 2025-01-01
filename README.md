@@ -48,21 +48,21 @@ The following providers are used by this module:
 
 The following Modules are called:
 
-### <a name="module_machine_image"></a> [machine\_image](#module\_machine\_image)
+### <a name="module_default_boot_iso"></a> [default\_boot\_iso](#module\_default\_boot\_iso)
+
+Source: ./modules/proxmox_machine_image_iso
+
+Version:
+
+### <a name="module_default_machine_image"></a> [default\_machine\_image](#module\_default\_machine\_image)
 
 Source: ./modules/machine_image
 
 Version:
 
-### <a name="module_talos_linux"></a> [talos\_linux](#module\_talos\_linux)
+### <a name="module_talos_machines"></a> [talos\_machines](#module\_talos\_machines)
 
-Source: ./modules/talos_linux
-
-Version:
-
-### <a name="module_virtual_machines"></a> [virtual\_machines](#module\_virtual\_machines)
-
-Source: ./modules/virtual_machines
+Source: ./modules/talos_machines
 
 Version:
 
@@ -71,6 +71,8 @@ Version:
 The following resources are used by this module:
 
 - [random_id.cluster_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
+- [talos_cluster_kubeconfig.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/cluster_kubeconfig) (resource)
+- [talos_machine_bootstrap.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/machine_bootstrap) (resource)
 - [talos_machine_secrets.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/machine_secrets) (resource)
 - [talos_client_configuration.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/client_configuration) (data source)
 
@@ -81,6 +83,22 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_apply"></a> [apply](#input\_apply)
+
+Description: Apply the Talos configuration.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_bootstrap"></a> [bootstrap](#input\_bootstrap)
+
+Description: Bootstrap the cluster.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint)
 
@@ -200,7 +218,7 @@ Type: `string`
 
 Default: `null`
 
-### <a name="input_machine_install_image"></a> [machine\_install\_image](#input\_machine\_install\_image)
+### <a name="input_machine_installer_image"></a> [machine\_installer\_image](#input\_machine\_installer\_image)
 
 Description: Image factory image name used for installation. If not set, use the same image version and extensions as the boot ISO.
 

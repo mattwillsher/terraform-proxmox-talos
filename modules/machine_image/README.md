@@ -11,8 +11,6 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
 
-- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (~> 0.69.0)
-
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
 - <a name="requirement_talos"></a> [talos](#requirement\_talos) (~> 0.7.0)
@@ -20,10 +18,6 @@ The following requirements are needed by this module:
 ## Providers
 
 The following providers are used by this module:
-
-- <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) (0.69.0)
-
-- <a name="provider_random"></a> [random](#provider\_random) (3.6.3)
 
 - <a name="provider_talos"></a> [talos](#provider\_talos) (0.7.0)
 
@@ -35,8 +29,6 @@ No modules.
 
 The following resources are used by this module:
 
-- [proxmox_virtual_environment_download_file.this](https://registry.terraform.io/providers/bpg/proxmox/latest/docs/resources/virtual_environment_download_file) (resource)
-- [random_id.id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 - [talos_image_factory_schematic.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/image_factory_schematic) (resource)
 - [talos_image_factory_extensions_versions.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/image_factory_extensions_versions) (data source)
 - [talos_image_factory_urls.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/image_factory_urls) (data source)
@@ -52,19 +44,11 @@ The following input variables are optional (have default values):
 
 ### <a name="input_disable_qemu_guest_agent"></a> [disable\_qemu\_guest\_agent](#input\_disable\_qemu\_guest\_agent)
 
-Description: Do not include the qemu guest agent.
+Description: Disable the inclusion of the qemu-guest-agent extension.
 
 Type: `bool`
 
 Default: `false`
-
-### <a name="input_download_iso"></a> [download\_iso](#input\_download\_iso)
-
-Description: If set to true, download the Talos Linux ISO to the Proxmox datastore.
-
-Type: `bool`
-
-Default: `true`
 
 ### <a name="input_extensions"></a> [extensions](#input\_extensions)
 
@@ -73,30 +57,6 @@ Description: List of extensions in the image. qemu-guest-agent is included by de
 Type: `list(string)`
 
 Default: `[]`
-
-### <a name="input_proxmox_datastore_id"></a> [proxmox\_datastore\_id](#input\_proxmox\_datastore\_id)
-
-Description: Datastore to store the image in.
-
-Type: `string`
-
-Default: `"local"`
-
-### <a name="input_proxmox_file_name_suffix"></a> [proxmox\_file\_name\_suffix](#input\_proxmox\_file\_name\_suffix)
-
-Description: Suffix to append to the Proxmox file name to make it unique per run. If not provided, a random suffix is generated.
-
-Type: `string`
-
-Default: `null`
-
-### <a name="input_proxmox_node_name"></a> [proxmox\_node\_name](#input\_proxmox\_node\_name)
-
-Description: Target node to place the image on.
-
-Type: `string`
-
-Default: `"pve"`
 
 ### <a name="input_secure_boot"></a> [secure\_boot](#input\_secure\_boot)
 
@@ -126,21 +86,17 @@ Default: `null`
 
 The following outputs are exported:
 
-### <a name="output_installer_url"></a> [installer\_url](#output\_installer\_url)
+### <a name="output_installer"></a> [installer](#output\_installer)
 
 Description: Machine image for Talos install/update
 
-### <a name="output_proxmox_datastore_id"></a> [proxmox\_datastore\_id](#output\_proxmox\_datastore\_id)
+### <a name="output_iso_url"></a> [iso\_url](#output\_iso\_url)
 
-Description: Datastore ID where the downloaded boot ISO file is stored in Proxmox, or null if not downloaded.
+Description: URL for the Talos ISO image.
 
-### <a name="output_proxmox_iso_file_id"></a> [proxmox\_iso\_file\_id](#output\_proxmox\_iso\_file\_id)
+### <a name="output_schematic_id"></a> [schematic\_id](#output\_schematic\_id)
 
-Description: ID of the downloaded boot ISO in Proxmox.
-
-### <a name="output_proxmox_iso_file_name"></a> [proxmox\_iso\_file\_name](#output\_proxmox\_iso\_file\_name)
-
-Description: Name of the downloaded boot ISO file in Proxmox, or null if not downloaded.
+Description: Image schematic id.
 
 ### <a name="output_talos_version"></a> [talos\_version](#output\_talos\_version)
 

@@ -3,19 +3,7 @@ locals {
     data.talos_image_factory_versions.this.talos_versions,
     length(data.talos_image_factory_versions.this.talos_versions) - 1
   )
-  talos_version      = var.talos_version != null ? var.talos_version : local.latest_talos_version
-  proxmox_nodes      = data.proxmox_virtual_environment_nodes.this
-  proxmox_datastores = data.proxmox_virtual_environment_datastores.this
-  proxmox_available_iso_datastores = [
-    for i, datastore in local.proxmox_datastores.datastore_ids : datastore
-    if contains(local.proxmox_datastores.content_types[i], "iso") && local.proxmox_datastores.active[i] && local.proxmox_datastores.enabled[i]
-  ]
-}
-
-data "proxmox_virtual_environment_nodes" "this" {}
-
-data "proxmox_virtual_environment_datastores" "this" {
-  node_name = var.proxmox_node_name
+  talos_version = var.talos_version != null ? var.talos_version : local.latest_talos_version
 }
 
 data "talos_image_factory_versions" "this" {
@@ -57,29 +45,5 @@ resource "talos_image_factory_schematic" "this" {
       },
       var.secure_boot ? { secureboot = { includeWellKnownCertificates = true } } : {}
     )
-  )
-}
-
-resource "random_id" "id" {
-  count       = var.proxmox_file_name_suffix == null ? 1 : 0
-  byte_length = 4
-}
-
-resource "proxmox_virtual_environment_download_file" "this" {
-  count        = var.download_iso ? 1 : 0
-  content_type = "iso"
-  datastore_id = var.proxmox_datastore_id
-  node_name    = var.proxmox_node_name
-  url          = var.secure_boot ? data.talos_image_factory_urls.this.urls.iso_secureboot : data.talos_image_factory_urls.this.urls.iso
-  # url = format("https://%s/image/%s/%s/nocloud-amd64%s.iso",
-  #   var.factory_host,
-  #   talos_image_factory_schematic.this.id,
-  #   local.talos_version,
-  #   var.secure_boot ? "-secureboot" : ""
-  # )
-  file_name = format("talos-%s-%s-%s.iso",
-    talos_image_factory_schematic.this.id,
-    local.talos_version,
-    var.proxmox_file_name_suffix == null ? random_id.id[0].hex : var.proxmox_file_name_suffix
   )
 }

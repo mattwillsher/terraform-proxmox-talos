@@ -2,21 +2,23 @@
 module "cluster" {
   source = "../.."
 
-  talos_version = "v1.8.4"
+  apply = true
+
+  talos_version = "v1.9.1"
 
   cluster_name = "basic-example"
 
   datastore_id = "nvme-data"
 
   controlplane = {
-    node_count = 3
-    memory     = 2048
-    tags       = ["controlplane"]
+    machine_count = 1
+    memory        = 2048
+    tags          = ["controlplane"]
   }
 
   workers = {
     default = {
-      node_count        = 3
+      machine_count     = 2
       memory_size_in_mb = 2048
       tags              = ["worker"]
     }

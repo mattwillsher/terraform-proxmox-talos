@@ -3,9 +3,9 @@ run "invalid_proxmox_host" {
   command = plan
 
   variables {
-    talos_version = "v1.9.1"
+    talos_version     = "v1.9.1"
     proxmox_node_name = "invalid"
-    download_iso  = false
+    download_iso      = false
   }
 
   expect_failures = [
@@ -19,13 +19,13 @@ run "invalid_proxmox_host" {
 }
 
 run "invalid_datastore" {
-  
+
   command = plan
 
   variables {
-    talos_version = "v1.9.1"
+    talos_version        = "v1.9.1"
     proxmox_datastore_id = "invalid"
-    download_iso  = false
+    download_iso         = false
   }
 
   expect_failures = [

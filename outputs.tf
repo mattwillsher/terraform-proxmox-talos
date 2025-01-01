@@ -8,17 +8,17 @@ output "node_ip_addresses" {
 
 output "kubeconfig_raw" {
   description = "Raw kubeconfig."
-  value       = module.talos_linux["controlplane"].kubeconfig_raw
+  value       = talos_cluster_kubeconfig.this.kubeconfig_raw
 }
 
 output "cluster_name" {
   description = "Cluster name."
-  value       = module.talos_linux["controlplane"].cluster_name
+  value       = module.talos_machines["controlplane"].cluster_name
 }
 
 output "machine_configurations" {
   description = "Machine configurations by node group."
-  value       = [for k, v in module.talos_linux : v.machine_configuration]
+  value       = [for k, v in module.talos_machines : v.machine_configuration]
 }
 
 output "talos_client_configuration" {
